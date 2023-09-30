@@ -1,4 +1,5 @@
 import { json,redirect } from "@remix-run/node";
+import { useEffect } from "react";
 import {
   Form,
   Links,
@@ -11,9 +12,10 @@ import {
   useNavigation,
   useLoaderData,
   ScrollRestoration,
+  useSubmit,
 } from "@remix-run/react";
 
-import type { LinksFunction } from "@remix-run/node";
+import type { LinksFunction,LoaderFunctionArgs, } from "@remix-run/node";
 // existing imports
 import appStylesHref from "./app.css";
 import { getContacts,createEmptyContact, } from "./data";
@@ -34,13 +36,37 @@ export const links: LinksFunction = () => [
 ];
 
 
-export const loader = async () => {
-  const contacts = await getContacts();
-  return json({ contacts });
+// export const loader = async () => {
+//   const contacts = await getContacts();
+//   return json({ contacts });
+// };
+
+export const loader = async ({
+  request,
+}: LoaderFunctionArgs) => {
+  const url = new URL(request.url);
+  const q = url.searchParams.get("q");
+  const contacts = await getContacts(q);
+  return json({ contacts, q });
 };
+
+
 export default function App() {
   const navigation = useNavigation();
-  const { contacts } =  useLoaderData<typeof loader>();
+  const submit = useSubmit();
+  const { contacts, q } = useLoaderData<typeof loader>();
+  const searching =
+  navigation.location &&
+  new URLSearchParams(navigation.location.search).has(
+    "q"
+  );
+
+  useEffect(() => {
+    const searchField = document.getElementById("q");
+    if (searchField instanceof HTMLInputElement) {
+      searchField.value = q || "";
+    }
+  }, [q]);
 
   return (
     <html lang="en">
@@ -54,13 +80,18 @@ export default function App() {
         <div id="sidebar">
           <h1>Remix Contacts</h1>
           <div>
-            <Form id="search-form" role="search">
+            <Form id="search-form"   onChange={(event) =>
+                submit(event.currentTarget)
+              } role="search">
               <input
                 id="q"
+                className={searching ? "loading" : ""}
                 aria-label="Search contacts"
+                defaultValue={q || ""}
                 placeholder="Search"
                 type="search"
                 name="q"
+                hidden={!searching}
               />
               <div id="search-spinner" aria-hidden hidden={true} />
             </Form>

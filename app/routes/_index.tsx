@@ -1,23 +1,11 @@
-import type { MetaFunction } from "@remix-run/node";
-
-export const meta: MetaFunction = () => {
-  return [
-    { title: "New Remix App" },
-    { name: "description", content: "Welcome to Remix!" },
-  ];
-};
-
 export default function Index() {
   return (
-    <div className="mx-auto mt-16 max-w-7xl text-center">
-  <Link
-    to="/posts"
-    className="text-xl text-blue-600 underline"
-  >
-    Blog Posts
-  </Link>
-</div>
-
-    
+    <p id="index-page">
+      This is a practical page how i learnt remix
+      <br />
+      Check out{" "}
+      <a href="https://osareniye.netlify.app">my website page</a>.
+    </p>
   );
 }
+
