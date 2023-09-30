@@ -2,11 +2,13 @@ import { json,redirect } from "@remix-run/node";
 import {
   Form,
   Links,
-  Link,
+ // Link,
+  NavLink,
   LiveReload,
   Meta,
   Scripts,
   Outlet,
+  useNavigation,
   useLoaderData,
   ScrollRestoration,
 } from "@remix-run/react";
@@ -37,6 +39,7 @@ export const loader = async () => {
   return json({ contacts });
 };
 export default function App() {
+  const navigation = useNavigation();
   const { contacts } =  useLoaderData<typeof loader>();
 
   return (
@@ -70,7 +73,8 @@ export default function App() {
               <ul>
                 {contacts.map((contact) => (
                   <li key={contact.id}>
-                    <Link to={`contacts/${contact.id}`}>
+                    
+                    {/* <Link to={`contacts/${contact.id}`}>
                       {contact.first || contact.last ? (
                         <>
                           {contact.first} {contact.last}
@@ -81,7 +85,36 @@ export default function App() {
                       {contact.favorite ? (
                         <span>★</span>
                       ) : null}
-                    </Link>
+                    </Link> */}
+                    <NavLink
+                  className={({ isActive, isPending }) =>
+                    isActive
+                      ? "active"
+                      : isPending
+                      ? "pending"
+                      : ""
+                  }
+                  to={`contacts/${contact.id}`}
+                >
+                 {contact.first || contact.last ? (
+                        <>
+                          {contact.first} {contact.last}
+                        </>
+                      ) : (
+                        <i>No Name</i>
+                      )}{" "}
+                      {contact.favorite ? (
+                        <span>★</span>
+                      ) : null}
+                </NavLink>
+
+
+
+
+
+
+
+                    
                   </li>
                 ))}
               </ul>
@@ -92,7 +125,10 @@ export default function App() {
             )}
           </nav>
         </div>
-        <div id="detail">
+        <div  className={
+            navigation.state === "loading" ? "loading" : ""
+          }
+          id="detail">
           <Outlet />
         </div>
 
