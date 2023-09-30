@@ -80,9 +80,15 @@ export default function App() {
         <div id="sidebar">
           <h1>Remix Contacts</h1>
           <div>
-            <Form id="search-form"   onChange={(event) =>
-                submit(event.currentTarget)
-              } role="search">
+            <Form id="search-form"
+            
+            onChange={(event) => {
+              const isFirstSearch = q === null;
+              submit(event.currentTarget, {
+                replace: !isFirstSearch,
+              });
+            }}
+            role="search">
               <input
                 id="q"
                 className={searching ? "loading" : ""}
@@ -91,9 +97,14 @@ export default function App() {
                 placeholder="Search"
                 type="search"
                 name="q"
-                hidden={!searching}
+                // hidden={!searching}
               />
-              <div id="search-spinner" aria-hidden hidden={true} />
+               <div
+                aria-hidden
+                hidden={!searching}
+                id="search-spinner"
+              />
+             
             </Form>
             <Form method="post">
               <button type="submit">New</button>
@@ -156,10 +167,14 @@ export default function App() {
             )}
           </nav>
         </div>
-        <div  className={
-            navigation.state === "loading" ? "loading" : ""
+        <div
+          className={
+            navigation.state === "loading" && !searching
+              ? "loading"
+              : ""
           }
-          id="detail">
+          id="detail"
+        >
           <Outlet />
         </div>
 
