@@ -1,4 +1,4 @@
-import { json } from "@remix-run/node";
+import { json,redirect } from "@remix-run/node";
 import {
   Form,
   Links,
@@ -11,7 +11,6 @@ import {
   ScrollRestoration,
 } from "@remix-run/react";
 
-
 import type { LinksFunction } from "@remix-run/node";
 // existing imports
 import appStylesHref from "./app.css";
@@ -23,7 +22,7 @@ import { getContacts,createEmptyContact, } from "./data";
 //creating a new form
 export const action = async () => {
   const contact = await createEmptyContact();
-  return json({ contact });
+  return redirect(`/contacts/${contact.id}/edit`);
 };
 
 // existing code
